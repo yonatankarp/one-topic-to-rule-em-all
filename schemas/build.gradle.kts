@@ -16,3 +16,11 @@ tasks.register<JavaExec>("registerAllSchemas") {
     classpath = sourceSets["main"].runtimeClasspath
     args(providers.gradleProperty("schemaRegistryUrl").getOrElse("http://localhost:8081"))
 }
+
+tasks.register<JavaExec>("unregisterAllSchemas") {
+    group = "schema registry"
+    description = "Deletes all event schema subjects (soft + permanent) for a clean re-register"
+    mainClass.set("org.guild.schemas.UnregisterSchemasKt")
+    classpath = sourceSets["main"].runtimeClasspath
+    args(providers.gradleProperty("schemaRegistryUrl").getOrElse("http://localhost:8081"))
+}
