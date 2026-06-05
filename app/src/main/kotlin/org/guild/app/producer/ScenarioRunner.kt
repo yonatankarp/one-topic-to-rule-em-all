@@ -39,7 +39,14 @@ class ScenarioRunner(
     }
 
     private fun send(key: String, event: SpecificRecord) {
+        // runCatching catches only router.topicFor() throws (synchronous) — the 🤷 path.
+        // Async broker failures surface via the future callback.
         runCatching { kafka.send(router.topicFor(event), key, event) }
+            .onSuccess { future ->
+                future.whenComplete { _, ex ->
+                    if (ex != null) log.error("❌ send failed for {}: {}", event.schema.name, ex.message)
+                }
+            }
             .onFailure { log.warn("🤷 {} has nowhere to go in this topology", event.schema.name) }
     }
 }

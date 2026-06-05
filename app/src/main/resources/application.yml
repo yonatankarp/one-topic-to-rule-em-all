@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    default: broken
   output:
     ansi:
       enabled: ALWAYS

@@ -18,6 +18,8 @@ class EventRouterTest {
         val router = BrokenEventRouter()
         assertThatThrownBy { router.topicFor(questAccepted("a", "Slay the rat king")) }
             .isInstanceOf(IllegalStateException::class.java)
+        assertThatThrownBy { router.topicFor(died("a", "rocks fell")) }
+            .isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
