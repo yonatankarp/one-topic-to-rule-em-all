@@ -25,12 +25,12 @@ class TavernNoticeBoard {
 
     @KafkaHandler
     fun on(event: AdventurerLeveledUp) {
-        post("🍺 Hear ye! ${event.adventurerId.take(8)}… is now level ${event.newLevel}!")
+        post("🍺 Hear ye! ${event.adventurerId.take(8)}... is now level ${event.newLevel}!")
     }
 
     @KafkaHandler
     fun on(event: AdventurerDied) {
-        post("🍺 A toast! ${event.adventurerId.take(8)}… ${event.cause}. F.")
+        post("🍺 A toast! ${event.adventurerId.take(8)}... ${event.cause}. F.")
     }
 
     @KafkaHandler(isDefault = true)

@@ -49,6 +49,6 @@ class GuildLedgerListener(
 
     @KafkaHandler(isDefault = true)
     fun unknown(event: Any) {
-        log.warn("❓ Unhandled event type: {}", event.javaClass.simpleName)
+        log.warn("❓ Unhandled event type: {}", event::class.simpleName)
     }
 }

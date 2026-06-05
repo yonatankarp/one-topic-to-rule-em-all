@@ -20,6 +20,9 @@ import java.time.Duration
 @EmbeddedKafka(partitions = 3, topics = ["guild.adventurers"])
 class FixedTopologyOrderingTest {
 
+    /** Must match @EmbeddedKafka(partitions = ...) above. */
+    private val partitionsPerTopic = 3
+
     @Autowired lateinit var runner: ScenarioRunner
     @Autowired lateinit var ledger: GuildLedgerState
     @Autowired lateinit var noticeBoard: TavernNoticeBoard
@@ -28,10 +31,10 @@ class FixedTopologyOrderingTest {
     @BeforeEach
     fun waitForConsumers() {
         // Both listener containers (guild-ledger + tavern-notice-board) must have
-        // all 3 partitions assigned before we produce — otherwise early records
+        // all partitions assigned before we produce — otherwise early records
         // could be processed before the rebalance completes.
         registry.listenerContainers.forEach { container ->
-            ContainerTestUtils.waitForAssignment(container, 3)
+            ContainerTestUtils.waitForAssignment(container, partitionsPerTopic)
         }
     }
 
