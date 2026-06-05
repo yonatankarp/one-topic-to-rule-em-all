@@ -161,5 +161,5 @@ make scenario      # POST /scenario/run and print JSON response (heroId)
 
 - This repo: <https://github.com/yonatankarp/one-topic-to-rule-em-all>
 - Confluent subject-naming strategy docs: <https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/index.html#subject-name-strategy>
-- Slides: [`slides/`](slides/) — deck arrives separately; the directory is the canonical location
+- Slides: [`slides/one-topic-to-rule-em-all.pdf`](slides/one-topic-to-rule-em-all.pdf)
 - Kafka UI (local, while stack is running): <http://localhost:8090>
