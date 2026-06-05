@@ -44,8 +44,8 @@ class FixedTopologyOrderingTest {
             assertThat(ledger.levelOf(heroId)).isNull()
             // …and the tavern heard about both his level-up AND his death, in order
             assertThat(noticeBoard.gossip.filter { heroId.take(8) in it }).hasSize(2)
+            // …and the race NEVER happened: no unknown-adventurer errors, despite identical load
+            assertThat(ledger.unknownAdventurerErrors).isEmpty()
         }
-        // the race NEVER happened: no unknown-adventurer errors, despite identical load
-        assertThat(ledger.unknownAdventurerErrors).isEmpty()
     }
 }
