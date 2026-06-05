@@ -1,5 +1,7 @@
 # Same topology as `fixed`, but the consumer is GuildLedgerWhenListener
 # (single @KafkaListener + `when` dispatch) instead of @KafkaHandler methods.
+# NOTE: the strategy property below is deliberately duplicated from
+# application-fixed.yml — keep the two in sync if it ever changes.
 spring:
   kafka:
     producer:

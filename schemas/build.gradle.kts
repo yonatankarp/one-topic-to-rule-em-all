@@ -88,10 +88,12 @@ fun registryRequest(
     }
     return try {
         client.send(builder.build(), HttpResponse.BodyHandlers.ofString())
-    } catch (e: ConnectException) {
-        error("Schema registry unreachable at $registryUrl — is the stack up? (make infra-up)")
-    } catch (e: HttpConnectTimeoutException) {
-        error("Schema registry unreachable at $registryUrl — is the stack up? (make infra-up)")
+    } catch (e: Exception) {
+        when (e) {
+            is ConnectException, is HttpConnectTimeoutException ->
+                error("Schema registry unreachable at $registryUrl — is the stack up? (make infra-up)")
+            else -> throw e
+        }
     }
 }
 
@@ -109,69 +111,73 @@ fun listSubjects(client: HttpClient, registryUrl: String, mapper: ObjectMapper):
 val avdlDir = layout.projectDirectory.dir("src/main/avro").asFile
 val registryUrlProvider = providers.gradleProperty("schemaRegistryUrl")
 
-tasks.register("registerAllSchemas") {
+/** Everything a registry task needs at execution time, built once per run. */
+class RegistryContext(
+    val registryUrl: String,
+    val subjects: Map<String, Schema>,
+    val client: HttpClient,
+    val mapper: ObjectMapper,
+)
+
+fun registryContext() = RegistryContext(
+    registryUrl = registryUrlProvider.getOrElse("http://localhost:8081"),
+    subjects = buildSubjectMap(parseAvdlSchemas(avdlDir)),
+    client = HttpClient.newHttpClient(),
+    mapper = ObjectMapper(),
+)
+
+/**
+ * Shared registry-task wiring. The logic lives in build-script functions
+ * (deliberate: no buildSrc), which the doLast lambdas capture — incompatible
+ * with the configuration cache, so declare that honestly (the task runs with
+ * CC disabled instead of failing). Effects are external registry state, not
+ * file outputs — never up-to-date.
+ */
+fun Task.registryTask() {
     group = "schema registry"
-    description = "Registers all event schemas under both naming strategies"
-
-    // The logic lives in build-script functions (deliberate: no buildSrc), which the
-    // doLast lambda captures — incompatible with the configuration cache. Declare it
-    // honestly so the task runs (CC disabled for it) instead of failing.
     notCompatibleWithConfigurationCache("registry tasks use build-script functions")
-
-    // Effect is external registry state, not file outputs — never up-to-date.
     outputs.upToDateWhen { false }
+}
+
+tasks.register("registerAllSchemas") {
+    description = "Registers all event schemas under both naming strategies"
+    registryTask()
 
     doLast {
-        val registryUrl = registryUrlProvider.getOrElse("http://localhost:8081")
-        val schemas = parseAvdlSchemas(avdlDir)
-        val subjects = buildSubjectMap(schemas)
-        val client = HttpClient.newHttpClient()
-        val mapper = ObjectMapper()
+        val ctx = registryContext()
 
-        subjects.forEach { (subject, schema) ->
-            val schemaJson = schema.toString()
-            // Escape the schema JSON as a string value inside the outer JSON object.
-            val escapedSchema = mapper.writeValueAsString(schemaJson)
-            val requestBody = """{"schema":${escapedSchema}}"""
+        ctx.subjects.forEach { (subject, schema) ->
+            val requestBody = ctx.mapper.writeValueAsString(mapOf("schema" to schema.toString()))
             val resp = registryRequest(
-                client,
+                ctx.client,
                 "POST",
-                "$registryUrl/subjects/$subject/versions",
-                registryUrl,
+                "${ctx.registryUrl}/subjects/$subject/versions",
+                ctx.registryUrl,
                 requestBody,
             )
             if (resp.statusCode() !in 200..299) {
                 error("Failed to register $subject: ${resp.statusCode()} ${resp.body()}")
             }
-            val id = mapper.readTree(resp.body())["id"].asInt()
+            val id = ctx.mapper.readTree(resp.body())["id"].asInt()
             println("registered $subject -> schema id $id")
         }
     }
 }
 
 tasks.register("unregisterAllSchemas") {
-    group = "schema registry"
     description = "Deletes all event schema subjects (soft + permanent) for a clean re-register"
-
-    // The logic lives in build-script functions (deliberate: no buildSrc), which the
-    // doLast lambda captures — incompatible with the configuration cache. Declare it
-    // honestly so the task runs (CC disabled for it) instead of failing.
-    notCompatibleWithConfigurationCache("registry tasks use build-script functions")
-
-    // Effect is external registry state, not file outputs — never up-to-date.
-    outputs.upToDateWhen { false }
+    registryTask()
 
     doLast {
         // Deletion is two-phase because the registry requires it: a permanent (hard)
         // delete is only allowed on a subject that was already soft-deleted. Soft delete
         // alone would work for re-registering, but leaves tombstoned versions behind —
         // the hard delete keeps rehearsal state truly clean.
-        val registryUrl = registryUrlProvider.getOrElse("http://localhost:8081")
-        val schemas = parseAvdlSchemas(avdlDir)
-        val subjects = buildSubjectMap(schemas)
-        val client = HttpClient.newHttpClient()
-        val mapper = ObjectMapper()
-        val existing = listSubjects(client, registryUrl, mapper)
+        val ctx = registryContext()
+        val registryUrl = ctx.registryUrl
+        val client = ctx.client
+        val subjects = ctx.subjects
+        val existing = listSubjects(client, registryUrl, ctx.mapper)
 
         subjects.keys.forEach { subject ->
             if (subject in existing) {
