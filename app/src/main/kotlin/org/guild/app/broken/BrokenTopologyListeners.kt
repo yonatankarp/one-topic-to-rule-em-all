@@ -22,7 +22,8 @@ class BrokenTopologyListeners(
 
     @KafkaListener(topics = ["guild.adventurer_registered"], groupId = "guild-ledger")
     fun onRegistered(event: AdventurerRegistered) {
-        Thread.sleep(latencyMs) // simulated enrichment/DB work per message
+        Thread.sleep(latencyMs) // DEMO ONLY: simulates per-message enrichment/DB work —
+                                // never block a listener thread like this in production
         ledger.register(event.adventurerId, event.name, event.characterClass)
     }
 
