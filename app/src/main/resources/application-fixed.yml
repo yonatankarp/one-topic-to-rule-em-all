@@ -1,0 +1,9 @@
+spring:
+  kafka:
+    producer:
+      properties:
+        # The one line this talk is about:
+        value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+
+guild:
+  topology: fixed

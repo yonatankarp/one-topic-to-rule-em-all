@@ -1,0 +1,4 @@
+# TopicNameStrategy is the serializer default — no strategy override needed.
+# This file exists to make the broken topology explicit and greppable.
+guild:
+  topology: broken
