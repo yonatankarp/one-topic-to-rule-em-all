@@ -26,6 +26,11 @@ class GuildLedgerState {
     fun register(id: String, name: String, characterClass: String) {
         roster[id] = AdventurerRecord(name, characterClass, level = 1)
         log.info("📜 {} the {} joined the guild (level 1)", name, characterClass)
+        if (id in _unknownAdventurerErrors) {
+            // The demo's punchline: by the time this registration was processed,
+            // the level-up had already arrived — and was rejected as unknown.
+            log.error("💥 {} finally registered — but their level-up arrived FIRST and was lost. That's the bug.", name)
+        }
     }
 
     fun levelUp(id: String, newLevel: Int): Boolean {

@@ -23,10 +23,14 @@ make run-broken
 make scenario
 ```
 
-Watch Terminal 1 for:
+Watch Terminal 1: a 💥 rejection fires almost instantly (and scrolls away under the
+flood), and when the flood finally drains, the last line is the proof:
 
 ```
 💥 LEVEL-UP FOR UNKNOWN ADVENTURER <id> — the ledger has never heard of them!
+...500 📜 registrations later...
+📜 Bob the Brave the Fighter joined the guild (level 1)
+💥 Bob the Brave finally registered — but their level-up arrived FIRST and was lost. That's the bug.
 ```
 
 The hero's level-up arrives before his own registration because the registration

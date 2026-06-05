@@ -4,6 +4,16 @@ spring:
   output:
     ansi:
       enabled: ALWAYS
+
+logging:
+  # Demo-friendly console: time + level + message, nothing else.
+  pattern:
+    console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(%5p) %m%n"
+  level:
+    # Kafka clients dump pages of config at INFO — mute to WARN.
+    # (spring-kafka's listener stays at INFO: the runbook waits for its
+    # "partitions assigned" lines before firing the scenario.)
+    org.apache.kafka: warn
   kafka:
     bootstrap-servers: localhost:9092
     producer:
