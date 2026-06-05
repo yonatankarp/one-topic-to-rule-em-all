@@ -18,8 +18,10 @@ class GuildLedgerState {
     private val log = LoggerFactory.getLogger(javaClass)
     private val roster = ConcurrentHashMap<String, AdventurerRecord>()
 
+    private val _unknownAdventurerErrors = CopyOnWriteArrayList<String>()
+
     /** Level-ups that arrived for adventurers the ledger has never seen. The demo's red flag. */
-    val unknownAdventurerErrors = CopyOnWriteArrayList<String>()
+    val unknownAdventurerErrors: List<String> get() = _unknownAdventurerErrors
 
     fun register(id: String, name: String, characterClass: String) {
         roster[id] = AdventurerRecord(name, characterClass, level = 1)
@@ -27,9 +29,10 @@ class GuildLedgerState {
     }
 
     fun levelUp(id: String, newLevel: Int): Boolean {
+        // Single consumer thread per group — get-then-put is safe here
         val current = roster[id]
         if (current == null) {
-            unknownAdventurerErrors += id
+            _unknownAdventurerErrors += id
             log.error("💥 LEVEL-UP FOR UNKNOWN ADVENTURER {} — the ledger has never heard of them!", id)
             return false
         }
@@ -38,6 +41,7 @@ class GuildLedgerState {
         return true
     }
 
+    /** Quest accepted — logged only; quest state is out of scope for this demo. */
     fun acceptQuest(id: String, questName: String) {
         val who = roster[id]?.name ?: id
         log.info("⚔️ {} accepted quest: {}", who, questName)
