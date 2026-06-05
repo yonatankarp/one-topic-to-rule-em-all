@@ -39,14 +39,20 @@ class ScenarioRunner(
     }
 
     private fun send(key: String, event: SpecificRecord) {
-        // runCatching catches only router.topicFor() throws (synchronous) — the 🤷 path.
-        // Async broker failures surface via the future callback.
+        // Synchronous throws: the router's IllegalStateException is the expected
+        // 🤷 path (no topic in this topology); anything else (e.g. serialization
+        // misconfig) must be loud, not masked. Async failures surface via the callback.
         runCatching { kafka.send(router.topicFor(event), key, event) }
             .onSuccess { future ->
                 future.whenComplete { _, ex ->
                     if (ex != null) log.error("❌ send failed for {}: {}", event.schema.name, ex.message)
                 }
             }
-            .onFailure { log.warn("🤷 {} has nowhere to go in this topology", event.schema.name) }
+            .onFailure {
+                when (it) {
+                    is IllegalStateException -> log.warn("🤷 {} has nowhere to go in this topology", event.schema.name)
+                    else -> log.error("❌ {} failed to send synchronously", event.schema.name, it)
+                }
+            }
     }
 }
