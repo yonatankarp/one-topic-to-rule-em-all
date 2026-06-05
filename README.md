@@ -114,7 +114,7 @@ has its own slot in the registry and the serializer can find the right one at ru
 | Path | What it is |
 |---|---|
 | `schemas/src/main/avro/` | Avro IDL (`.avdl`) for all four events |
-| `schemas/src/main/kotlin/org/guild/schemas/` | `RegisterSchemas.kt` / `UnregisterSchemas.kt` — Gradle tasks `registerAllSchemas` / `unregisterAllSchemas` |
+| `schemas/build.gradle.kts` | Gradle tasks `registerAllSchemas` / `unregisterAllSchemas` — parse `.avdl` files at execution time via `IdlReader`, talk to the registry with plain JDK `HttpClient` (no Confluent SDK) |
 | `app/src/main/kotlin/org/guild/app/broken/` | Act 1: `BrokenTopologyListeners` (two `@KafkaListener`s) |
 | `app/src/main/kotlin/org/guild/app/fixed/` | Act 2: `GuildLedgerListener` (`@KafkaHandler` dispatch), `TavernNoticeBoard` (second consumer group), and `GuildLedgerWhenListener` (the `when`-dispatch alternative — try profile `fixed-when`) |
 | `app/src/main/kotlin/org/guild/app/ledger/` | `GuildLedgerState` — profile-agnostic in-memory state shared by both acts |
