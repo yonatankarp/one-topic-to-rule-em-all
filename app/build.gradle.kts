@@ -13,5 +13,5 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
-    testImplementation("org.awaitility:awaitility-kotlin:4.3.1")
+    testImplementation("org.awaitility:awaitility-kotlin:4.3.0")
 }
