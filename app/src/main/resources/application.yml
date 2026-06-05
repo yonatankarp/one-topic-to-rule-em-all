@@ -20,5 +20,8 @@ spring:
         specific.avro.reader: true
 
 guild:
+  # How many AdventurerRegistered events the scenario floods before the hero's
+  # lifecycle — the backlog that lets the level-up overtake in the broken act.
   flood-size: 500
+  # Simulated per-message work (enrichment/DB write) in the registration listener.
   registration-latency-ms: 5
