@@ -1,6 +1,6 @@
 @namespace("org.guild.adventurer")
 protocol AdventurerDiedProtocol {
-  /** Rocks fall. */
+  /** An adventurer dies (rocks fall). Rare event. */
   record AdventurerDied {
     string adventurer_id;
     string cause;

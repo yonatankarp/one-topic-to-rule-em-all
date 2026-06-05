@@ -1,6 +1,6 @@
 @namespace("org.guild.adventurer")
 protocol QuestAcceptedProtocol {
-  /** An adventurer takes a quest from the board. */
+  /** An adventurer takes a quest from the board. Occasional event. */
   record QuestAccepted {
     string adventurer_id;
     string quest_name;
