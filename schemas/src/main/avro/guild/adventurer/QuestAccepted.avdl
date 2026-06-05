@@ -1,0 +1,9 @@
+@namespace("org.guild.adventurer")
+protocol QuestAcceptedProtocol {
+  /** An adventurer takes a quest from the board. */
+  record QuestAccepted {
+    string adventurer_id;
+    string quest_name;
+    timestamp_ms accepted_at;
+  }
+}

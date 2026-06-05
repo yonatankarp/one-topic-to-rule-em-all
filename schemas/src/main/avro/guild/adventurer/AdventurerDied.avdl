@@ -1,0 +1,9 @@
+@namespace("org.guild.adventurer")
+protocol AdventurerDiedProtocol {
+  /** Rocks fall. */
+  record AdventurerDied {
+    string adventurer_id;
+    string cause;
+    timestamp_ms died_at;
+  }
+}

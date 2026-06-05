@@ -1,0 +1,9 @@
+@namespace("org.guild.adventurer")
+protocol AdventurerLeveledUpProtocol {
+  /** An adventurer gains a level. Rare event. */
+  record AdventurerLeveledUp {
+    string adventurer_id;
+    int new_level;
+    timestamp_ms leveled_at;
+  }
+}

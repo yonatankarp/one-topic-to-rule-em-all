@@ -1,0 +1,10 @@
+@namespace("org.guild.adventurer")
+protocol AdventurerRegisteredProtocol {
+  /** A new adventurer signs the guild ledger. High-volume event. */
+  record AdventurerRegistered {
+    string adventurer_id;
+    string name;
+    string character_class;
+    timestamp_ms registered_at;
+  }
+}
