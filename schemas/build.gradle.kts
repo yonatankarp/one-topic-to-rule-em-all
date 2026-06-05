@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api("org.apache.avro:avro:1.12.1")
     implementation("io.confluent:kafka-schema-registry-client:8.2.1")
+    runtimeOnly("org.slf4j:slf4j-simple:2.0.17")
 }
 
 tasks.register<JavaExec>("registerAllSchemas") {

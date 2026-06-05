@@ -16,7 +16,11 @@ val EVENT_SCHEMAS = listOf(
     AdventurerDied.getClassSchema(),
 )
 
-/** Act 1 (broken): TopicNameStrategy — subject is "<topic>-value", one schema per topic. */
+/**
+ * Act 1 (broken): TopicNameStrategy — subject is "<topic>-value", one schema per topic.
+ * Deliberately covers only the two racing events: Act 1's per-event-type topology has no
+ * topics for QuestAccepted/AdventurerDied — the full lifecycle only exists in Act 2.
+ */
 val TOPIC_NAME_SUBJECTS = mapOf(
     "guild.adventurer_registered-value" to AdventurerRegistered.getClassSchema(),
     "guild.adventurer_leveled_up-value" to AdventurerLeveledUp.getClassSchema(),
