@@ -1,6 +1,6 @@
-# One Aggregate, One Topic: Taming Event Order
+# One Topic to Rule 'Em All
 
-This repository is the companion demo for the talk *"One Aggregate, One Topic: Taming Event Order"* (Kotlin User Group Berlin). It shows, in running code, how splitting domain events across one-topic-per-event-type silently breaks ordering between events that belong to the same aggregate — even when every message is delivered exactly once. The fix is deliberate and minimal: one topic per aggregate, every message keyed by aggregate id, multiple Avro schemas on the same topic via `TopicRecordNameStrategy`.
+This repository is the companion demo for the talk *"One Topic to Rule 'Em All — taming domain-event order with Kafka & Avro"* (Kotlin User Group Berlin). It shows, in running code, how splitting domain events across one-topic-per-event-type silently breaks ordering between events that belong to the same aggregate — even when every message is delivered exactly once. The fix is deliberate and minimal: one topic per aggregate, every message keyed by aggregate id, multiple Avro schemas on the same topic via `TopicRecordNameStrategy`.
 
 **Takeaway:** Order within the aggregate → one topic per aggregate, key = aggregate id, multiple schemas via `TopicRecordNameStrategy`.
 
@@ -155,6 +155,7 @@ make scenario      # POST /scenario/run and print JSON response (heroId)
 
 ## Links
 
+- This repo: <https://github.com/yonatankarp/one-topic-to-rule-em-all>
 - Confluent subject-naming strategy docs: <https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/index.html#subject-name-strategy>
 - Slides: [`slides/`](slides/) — deck arrives separately; the directory is the canonical location
 - Kafka UI (local, while stack is running): <http://localhost:8090>
