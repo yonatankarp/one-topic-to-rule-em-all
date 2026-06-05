@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm") version "2.1.21" apply false
-    kotlin("plugin.spring") version "2.1.21" apply false
-    id("org.springframework.boot") version "3.5.0" apply false
+    kotlin("jvm") version "2.4.0" apply false
+    kotlin("plugin.spring") version "2.4.0" apply false
+    id("org.springframework.boot") version "4.0.6" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
-    id("com.github.davidmc24.gradle.plugin.avro") version "1.9.1" apply false
+    id("io.github.androa.gradle.plugin.avro") version "0.0.12" apply false
 }
 
 allprojects {
