@@ -1,0 +1,14 @@
+spring:
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+    producer:
+      properties:
+        schema.registry.url: mock://guild
+        auto.register.schemas: true
+    consumer:
+      properties:
+        schema.registry.url: mock://guild
+
+guild:
+  flood-size: 200
+  registration-latency-ms: 5
