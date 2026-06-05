@@ -17,6 +17,6 @@ class TopicsConfig {
     fun leveledUpTopic(): NewTopic = NewTopic("guild.adventurer_leveled_up", 1, 1.toShort())
 
     @Bean
-    @Profile("fixed")
+    @Profile("fixed", "fixed-when")
     fun adventurersTopic(): NewTopic = NewTopic("guild.adventurers", 3, 1.toShort())
 }

@@ -1,0 +1,10 @@
+# Same topology as `fixed`, but the consumer is GuildLedgerWhenListener
+# (single @KafkaListener + `when` dispatch) instead of @KafkaHandler methods.
+spring:
+  kafka:
+    producer:
+      properties:
+        value.subject.name.strategy: io.confluent.kafka.serializers.subject.TopicRecordNameStrategy
+
+guild:
+  topology: fixed-when

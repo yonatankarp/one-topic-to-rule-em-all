@@ -37,8 +37,8 @@ The hero's level-up arrives before his own registration because the registration
 consumer is drowning in the backlog of 500 flood registrations (each takes 5 ms of
 simulated work), while the level-up topic is empty and consumed instantly.
 
-Also note `🤷` lines — the quest and death events have no topic in this topology
-and are silently dropped by the producer.
+Also note `🤷` lines — the quest and death events have no topic in this topology;
+the producer drops them with a shrug.
 
 ### Act 2 — watch it work
 
@@ -115,8 +115,8 @@ has its own slot in the registry and the serializer can find the right one at ru
 |---|---|
 | `schemas/src/main/avro/` | Avro IDL (`.avdl`) for all four events |
 | `schemas/src/main/kotlin/org/guild/schemas/` | `RegisterSchemas.kt` / `UnregisterSchemas.kt` — Gradle tasks `registerAllSchemas` / `unregisterAllSchemas` |
-| `app/src/main/kotlin/org/guild/app/broken/` | Act 1: `BrokenTopologyListeners` (two `@KafkaListener`s) + `BrokenEventRouter` |
-| `app/src/main/kotlin/org/guild/app/fixed/` | Act 2: `GuildLedgerListener` (`@KafkaHandler` dispatch) + `TavernNoticeBoard` (second consumer group) |
+| `app/src/main/kotlin/org/guild/app/broken/` | Act 1: `BrokenTopologyListeners` (two `@KafkaListener`s) |
+| `app/src/main/kotlin/org/guild/app/fixed/` | Act 2: `GuildLedgerListener` (`@KafkaHandler` dispatch), `TavernNoticeBoard` (second consumer group), and `GuildLedgerWhenListener` (the `when`-dispatch alternative — try profile `fixed-when`) |
 | `app/src/main/kotlin/org/guild/app/ledger/` | `GuildLedgerState` — profile-agnostic in-memory state shared by both acts |
 | `app/src/main/kotlin/org/guild/app/producer/` | `ScenarioRunner`, `ScenarioController` (`POST /scenario/run`), `EventRouter` |
 | `app/src/main/resources/` | `application.yml` (shared config, flood-size=500, latency-ms=5), `application-broken.yml`, `application-fixed.yml` |

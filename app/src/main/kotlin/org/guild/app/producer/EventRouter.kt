@@ -22,7 +22,7 @@ class BrokenEventRouter : EventRouter {
 }
 
 @Component
-@Profile("fixed")
+@Profile("fixed", "fixed-when")
 class FixedEventRouter : EventRouter {
     override fun topicFor(event: SpecificRecord): String = "guild.adventurers"
 }
