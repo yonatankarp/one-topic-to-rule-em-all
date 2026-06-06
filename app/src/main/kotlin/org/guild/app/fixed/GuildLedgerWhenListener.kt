@@ -40,7 +40,7 @@ class GuildLedgerWhenListener(
             is AdventurerLeveledUp -> ledger.levelUp(event.adventurerId, event.newLevel)
             is QuestAccepted -> ledger.acceptQuest(event.adventurerId, event.questName)
             is AdventurerDied -> ledger.die(event.adventurerId, event.cause)
-            else -> log.warn("❓ Unhandled event type: {}", event::class.simpleName)
+            else -> log.warn("Unhandled event type: {}", event::class.simpleName)
         }
     }
 }
