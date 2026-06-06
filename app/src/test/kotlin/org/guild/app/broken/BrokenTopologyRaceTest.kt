@@ -33,7 +33,7 @@ class BrokenTopologyRaceTest {
     @BeforeEach
     fun waitForConsumers() {
         // Both listener containers must have their partitions assigned before
-        // we produce — otherwise the consumers may pick up all messages in a
+        // we produce - otherwise the consumers may pick up all messages in a
         // single poll batch before the rebalance gives the level-up container
         // its partition, defeating the race.
         registry.listenerContainers.forEach { container ->

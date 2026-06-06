@@ -13,11 +13,11 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 
 /**
- * The `when`-dispatch alternative to [GuildLedgerListener] — the other column of
+ * The `when`-dispatch alternative to [GuildLedgerListener] - the other column of
  * the talk's trade-off slide. Try it with: --spring.profiles.active=fixed-when
  *
  * Trade-off: dispatch is explicit and greppable in one place, but Avro-generated
- * classes are NOT sealed, so the compiler cannot enforce exhaustiveness — the
+ * classes are NOT sealed, so the compiler cannot enforce exhaustiveness - the
  * `else` branch is still required, and a forgotten event type lands there at
  * runtime, exactly like @KafkaHandler's isDefault. Real compile-time
  * exhaustiveness requires mapping events into your own sealed hierarchy first.

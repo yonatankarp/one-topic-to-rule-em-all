@@ -4,7 +4,7 @@ build/
 *.iml
 .DS_Store
 
-# Slide sources live in a private repo — only the PDF ships here
+# Slide sources live in a private repo - only the PDF ships here
 slides/*.pptx
 slides/*.js
 slides/*.py

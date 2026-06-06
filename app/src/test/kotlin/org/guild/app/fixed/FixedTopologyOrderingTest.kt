@@ -31,7 +31,7 @@ class FixedTopologyOrderingTest {
     @BeforeEach
     fun waitForConsumers() {
         // Both listener containers (guild-ledger + tavern-notice-board) must have
-        // all partitions assigned before we produce — otherwise early records
+        // all partitions assigned before we produce - otherwise early records
         // could be processed before the rebalance completes.
         registry.listenerContainers.forEach { container ->
             ContainerTestUtils.waitForAssignment(container, partitionsPerTopic)
@@ -43,7 +43,7 @@ class FixedTopologyOrderingTest {
         val heroId = runner.run()
 
         await.atMost(Duration.ofSeconds(60)) untilAsserted {
-            // The hero died LAST in his lifecycle — once processed he's off the roster…
+            // The hero died LAST in his lifecycle - once processed he's off the roster…
             assertThat(ledger.levelOf(heroId)).isNull()
             // …and the tavern heard about both his level-up AND his death, in order
             assertThat(noticeBoard.gossip.filter { heroId.take(8) in it }).hasSize(2)

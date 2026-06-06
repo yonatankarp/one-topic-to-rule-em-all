@@ -26,14 +26,14 @@ logging:
   pattern:
     console: "%clr(%d{HH:mm:ss.SSS}){faint} %clr(%5p) %m%n"
   level:
-    # Kafka clients dump pages of config at INFO — mute to WARN.
+    # Kafka clients dump pages of config at INFO - mute to WARN.
     # (spring-kafka's listener stays at INFO: the runbook waits for its
     # "partitions assigned" lines before firing the scenario.)
     org.apache.kafka: warn
 
 guild:
   # How many AdventurerRegistered events the scenario floods before the hero's
-  # lifecycle — the backlog that lets the level-up overtake in the broken act.
+  # lifecycle - the backlog that lets the level-up overtake in the broken act.
   flood-size: 500
   # Simulated per-message work (enrichment/DB write) in the registration listener.
   registration-latency-ms: 5

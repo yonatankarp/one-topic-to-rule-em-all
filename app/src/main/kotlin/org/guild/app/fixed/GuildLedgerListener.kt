@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component
 
 /**
  * Act 2: every adventurer event on ONE topic, keyed by adventurer id.
- * Spring routes each record to the handler matching its deserialized type —
+ * Spring routes each record to the handler matching its deserialized type -
  * the class reads like the aggregate's lifecycle.
  */
 @Profile("fixed")
@@ -28,7 +28,7 @@ class GuildLedgerListener(
 
     @KafkaHandler
     fun on(event: AdventurerRegistered) {
-        Thread.sleep(latencyMs) // same simulated work as Act 1 — same load, different outcome
+        Thread.sleep(latencyMs) // same simulated work as Act 1 - same load, different outcome
         ledger.register(event.adventurerId, event.name, event.characterClass)
     }
 

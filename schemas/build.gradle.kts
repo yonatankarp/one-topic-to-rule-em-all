@@ -32,7 +32,7 @@ dependencies {
 }
 
 // ---------------------------------------------------------------------------
-// Schema-registry helpers — plain JDK HttpClient, no Confluent SDK needed.
+// Schema-registry helpers - plain JDK HttpClient, no Confluent SDK needed.
 // ---------------------------------------------------------------------------
 
 /**
@@ -91,7 +91,7 @@ fun registryRequest(
     } catch (e: Exception) {
         when (e) {
             is ConnectException, is HttpConnectTimeoutException ->
-                error("Schema registry unreachable at $registryUrl — is the stack up? (make infra-up)")
+                error("Schema registry unreachable at $registryUrl - is the stack up? (make infra-up)")
             else -> throw e
         }
     }
@@ -128,10 +128,10 @@ fun registryContext() = RegistryContext(
 
 /**
  * Shared registry-task wiring. The logic lives in build-script functions
- * (deliberate: no buildSrc), which the doLast lambdas capture — incompatible
+ * (deliberate: no buildSrc), which the doLast lambdas capture - incompatible
  * with the configuration cache, so declare that honestly (the task runs with
  * CC disabled instead of failing). Effects are external registry state, not
- * file outputs — never up-to-date.
+ * file outputs - never up-to-date.
  */
 fun Task.registryTask() {
     group = "schema registry"
@@ -171,7 +171,7 @@ tasks.register("unregisterAllSchemas") {
     doLast {
         // Deletion is two-phase because the registry requires it: a permanent (hard)
         // delete is only allowed on a subject that was already soft-deleted. Soft delete
-        // alone would work for re-registering, but leaves tombstoned versions behind —
+        // alone would work for re-registering, but leaves tombstoned versions behind -
         // the hard delete keeps rehearsal state truly clean.
         val ctx = registryContext()
         val registryUrl = ctx.registryUrl
@@ -186,7 +186,7 @@ tasks.register("unregisterAllSchemas") {
                 if (soft.statusCode() !in 200..299) {
                     error("Failed to soft-delete $subject: ${soft.statusCode()} ${soft.body()}")
                 }
-                // Permanent delete — keeps rehearsal state truly clean
+                // Permanent delete - keeps rehearsal state truly clean
                 val permanent = registryRequest(
                     client,
                     "DELETE",

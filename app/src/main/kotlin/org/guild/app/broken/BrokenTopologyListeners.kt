@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 /**
  * Act 1: one topic per event type. The registration listener simulates a real
- * consumer doing per-message work (enrichment, DB write) — so the busy topic
+ * consumer doing per-message work (enrichment, DB write) - so the busy topic
  * lags while the quiet level-up topic is consumed instantly.
  */
 @Profile("broken")
@@ -22,7 +22,7 @@ class BrokenTopologyListeners(
 
     @KafkaListener(topics = ["guild.adventurer_registered"], groupId = "guild-ledger")
     fun onRegistered(event: AdventurerRegistered) {
-        Thread.sleep(latencyMs) // DEMO ONLY: simulates per-message enrichment/DB work —
+        Thread.sleep(latencyMs) // DEMO ONLY: simulates per-message enrichment/DB work -
                                 // never block a listener thread like this in production
         ledger.register(event.adventurerId, event.name, event.characterClass)
     }

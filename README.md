@@ -1,6 +1,6 @@
 # One Topic to Rule 'Em All
 
-This repository is the companion demo for the talk *"One Topic to Rule 'Em All — taming domain-event order with Kafka & Avro"* (Kotlin User Group Berlin). It shows, in running code, how splitting domain events across one-topic-per-event-type silently breaks ordering between events that belong to the same aggregate — even when every message is delivered exactly once. The fix is deliberate and minimal: one topic per aggregate, every message keyed by aggregate id, multiple Avro schemas on the same topic via `TopicRecordNameStrategy`.
+This repository is the companion demo for the talk *"One Topic to Rule 'Em All - taming domain-event order with Kafka & Avro"* (Kotlin User Group Berlin). It shows, in running code, how splitting domain events across one-topic-per-event-type silently breaks ordering between events that belong to the same aggregate - even when every message is delivered exactly once. The fix is deliberate and minimal: one topic per aggregate, every message keyed by aggregate id, multiple Avro schemas on the same topic via `TopicRecordNameStrategy`.
 
 **Takeaway:** Order within the aggregate → one topic per aggregate, key = aggregate id, multiple schemas via `TopicRecordNameStrategy`.
 
@@ -10,7 +10,7 @@ This repository is the companion demo for the talk *"One Topic to Rule 'Em All �
 
 **Prerequisites:** Docker (Compose v2), JDK 21+
 
-### Act 1 — watch it break
+### Act 1 - watch it break
 
 ```bash
 # Terminal 1: full reset (tears down any existing stack, starts fresh, registers schemas)
@@ -27,20 +27,20 @@ Watch Terminal 1: a 💥 rejection fires almost instantly (and scrolls away unde
 flood), and when the flood finally drains, the last line is the proof:
 
 ```
-💥 LEVEL-UP FOR UNKNOWN ADVENTURER <id> — the ledger has never heard of them!
+💥 LEVEL-UP FOR UNKNOWN ADVENTURER <id> - the ledger has never heard of them!
 ...500 📜 registrations later...
 📜 Bob the Brave the Fighter joined the guild (level 1)
-💥 Bob the Brave finally registered — but their level-up arrived FIRST and was lost. That's the bug.
+💥 Bob the Brave finally registered - but their level-up arrived FIRST and was lost. That's the bug.
 ```
 
 The hero's level-up arrives before his own registration because the registration
 consumer is drowning in the backlog of 500 flood registrations (each takes 5 ms of
 simulated work), while the level-up topic is empty and consumed instantly.
 
-Also note `🤷` lines — the quest and death events have no topic in this topology;
+Also note `🤷` lines - the quest and death events have no topic in this topology;
 the producer drops them with a shrug.
 
-### Act 2 — watch it work
+### Act 2 - watch it work
 
 ```bash
 # Terminal 1: stop the app (Ctrl-C), then:
@@ -50,7 +50,7 @@ make run-fixed
 make scenario
 ```
 
-Watch Terminal 1 for the hero's ordered lifecycle — no 💥, ever:
+Watch Terminal 1 for the hero's ordered lifecycle - no 💥, ever:
 
 ```
 📜 Bob the Brave the Fighter joined the guild (level 1)
@@ -70,18 +70,18 @@ And the tavern's independent consumer group gossiping:
 
 ## What just happened
 
-**Act 1 — the race.** When events live on separate topics, Kafka's ordering guarantee
+**Act 1 - the race.** When events live on separate topics, Kafka's ordering guarantee
 (messages with the same key land in the same partition, in order) applies *per topic*,
-not across topics. The registration consumer has real work to do per message — it
-simulates enrichment and a DB write — so it accumulates a backlog. The level-up topic
+not across topics. The registration consumer has real work to do per message - it
+simulates enrichment and a DB write - so it accumulates a backlog. The level-up topic
 is nearly empty, so that consumer races ahead. By the time the hero's level-up arrives
 at the ledger, his registration has not yet been processed. The ledger has never heard
 of him. Red flag: `💥 LEVEL-UP FOR UNKNOWN ADVENTURER`.
 
-**Act 2 — the fix.** All four adventurer events land on the single `guild.adventurers`
+**Act 2 - the fix.** All four adventurer events land on the single `guild.adventurers`
 topic, keyed by `adventurerId`. Kafka guarantees that all messages with the same key
 land in the same partition, in the order they were produced. The registration consumer
-still does the same 5 ms of work per message — same load, same latency — but now the
+still does the same 5 ms of work per message - same load, same latency - but now the
 level-up is behind it in the same partition queue and cannot overtake it. The `@KafkaHandler`
 dispatch in `GuildLedgerListener` routes each Avro type to the right method. The
 `TavernNoticeBoard` consumes the same topic under its own consumer group (`tavern-notice-board`),
@@ -103,7 +103,7 @@ spring:
 ```
 
 Without this, the Confluent serializer defaults to `TopicNameStrategy` and expects a
-single schema per topic — it cannot handle multiple Avro types on `guild.adventurers`.
+single schema per topic - it cannot handle multiple Avro types on `guild.adventurers`.
 `TopicRecordNameStrategy` uses `<topic>-<record FQN>` as the subject, so each schema
 has its own slot in the registry and the serializer can find the right one at runtime.
 
@@ -114,13 +114,13 @@ has its own slot in the registry and the serializer can find the right one at ru
 | Path | What it is |
 |---|---|
 | `schemas/src/main/avro/` | Avro IDL (`.avdl`) for all four events |
-| `schemas/build.gradle.kts` | Gradle tasks `registerAllSchemas` / `unregisterAllSchemas` — parse `.avdl` files at execution time via `IdlReader`, talk to the registry with plain JDK `HttpClient` (no Confluent SDK) |
+| `schemas/build.gradle.kts` | Gradle tasks `registerAllSchemas` / `unregisterAllSchemas` - parse `.avdl` files at execution time via `IdlReader`, talk to the registry with plain JDK `HttpClient` (no Confluent SDK) |
 | `app/src/main/kotlin/org/guild/app/broken/` | Act 1: `BrokenTopologyListeners` (two `@KafkaListener`s) |
-| `app/src/main/kotlin/org/guild/app/fixed/` | Act 2: `GuildLedgerListener` (`@KafkaHandler` dispatch), `TavernNoticeBoard` (second consumer group), and `GuildLedgerWhenListener` (the `when`-dispatch alternative — try profile `fixed-when`) |
-| `app/src/main/kotlin/org/guild/app/ledger/` | `GuildLedgerState` — profile-agnostic in-memory state shared by both acts |
+| `app/src/main/kotlin/org/guild/app/fixed/` | Act 2: `GuildLedgerListener` (`@KafkaHandler` dispatch), `TavernNoticeBoard` (second consumer group), and `GuildLedgerWhenListener` (the `when`-dispatch alternative - try profile `fixed-when`) |
+| `app/src/main/kotlin/org/guild/app/ledger/` | `GuildLedgerState` - profile-agnostic in-memory state shared by both acts |
 | `app/src/main/kotlin/org/guild/app/producer/` | `ScenarioRunner`, `ScenarioController` (`POST /scenario/run`), `EventRouter` |
 | `app/src/main/resources/` | `application.yml` (shared config, flood-size=500, latency-ms=5), `application-broken.yml`, `application-fixed.yml` |
-| `Makefile` | Full control surface — run `make help` for all targets |
+| `Makefile` | Full control surface - run `make help` for all targets |
 | `docker-compose.yml` | Kafka (KRaft, port 9092), Schema Registry (port 8081), Kafka UI (port 8090) |
 
 ---
